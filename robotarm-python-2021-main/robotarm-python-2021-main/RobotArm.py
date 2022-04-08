@@ -302,9 +302,6 @@ class RobotArm:
   def scan(self):
     return self._color
 
-  def moveRightTimes(self, times : int):
-    for x in range(times):
-      self.moveRight()
 
 
 
@@ -447,3 +444,32 @@ class RobotArm:
 
   def operate(self):
     self.wait(self._operator)
+
+class SmartRobotArm(RobotArm):
+  def moveRightTimes(self, times : int):
+    for _ in range(times):
+      self.moveRight()
+  
+  def moveLeftTimes(self, times : int):
+    for _ in range(times):
+      self.moveLeft()
+
+  def moveTo(self, chosenPosition : int):
+    while self.position != chosenPosition:
+      if self.position > chosenPosition:
+        self.moveLeft()
+      elif self.position < chosenPosition:
+        self.moveRight()
+
+  def getStackSize(self, position: int = 1):
+    return len(self._yard[position])
+    
+    
+
+  @property
+  def _position(self):
+    return ((self._armX - 6) //34) +1
+
+  @property
+  def position(self):
+    return self._position
