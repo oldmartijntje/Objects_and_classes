@@ -477,6 +477,52 @@ class SmartRobotArm(RobotArm):
         self.drop()
         self.moveTo(tempPos)
       return True
+  
+  def getNextColorRight(self, color : str):
+    if color in self._yard[self._position-1]:
+      temp = list(self._yard[self._position-1])
+      temp.reverse()
+      num = temp.index(color)
+      self.grabNumber(num)
+      return True
+    elif color in self._yard[self._position]:
+      self.moveRight()
+      temp = list(self._yard[self._position-1])
+      temp.reverse()
+      num = temp.index(color)
+      self.grabNumber(num)
+      return True
+    else:
+      return False
+
+  def getNextColorLeft(self, color : str):
+    if color in self._yard[self._position-1]:
+      temp = list(self._yard[self._position-1])
+      temp.reverse()
+      num = temp.index(color)
+      self.grabNumber(num)
+      return True
+    elif color in self._yard[self._position-2]:
+      self.moveLeft()
+      temp = list(self._yard[self._position-1])
+      temp.reverse()
+      num = temp.index(color)
+      self.grabNumber(num)
+      return True
+    else:
+      return False
+
+  def grabNumber(self, number):
+    success = False
+    if self._color == self.EMPTY:
+      self._animate('down')
+      if len(self._yard[self._stack]) > 0:
+        self._color = self._yard[self._stack][-(1+number)]
+        self._yard[self._stack].pop(-(1+number))
+        success = True
+      self._animate('up')
+    return success
+
 
   @property
   def _position(self):
