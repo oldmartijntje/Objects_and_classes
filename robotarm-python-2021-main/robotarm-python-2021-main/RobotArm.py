@@ -455,6 +455,8 @@ class SmartRobotArm(RobotArm):
       self.moveLeft()
 
   def moveTo(self, chosenPosition : int):
+    if chosenPosition > self._maxStacks or chosenPosition <= 0:
+      raise ValueError('It\'s outside of the screen')
     while self.position != chosenPosition:
       if self.position > chosenPosition:
         self.moveLeft()
@@ -462,9 +464,19 @@ class SmartRobotArm(RobotArm):
         self.moveRight()
 
   def getStackSize(self, position: int = 1):
-    return len(self._yard[position])
+    return len(self._yard[position-1])
     
-    
+  def moveStackTo(self, position: int):
+    if self.getStackSize(position) + self.getStackSize(self.position) > self._maxLayers:
+      return False
+    else:
+      tempPos = self.position
+      for _ in range(self.getStackSize(self.position)):
+        self.grab()
+        self.moveTo(position)
+        self.drop()
+        self.moveTo(tempPos)
+      return True
 
   @property
   def _position(self):
